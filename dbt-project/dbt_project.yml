@@ -28,6 +28,6 @@ models:
   dbt_airflow_on_gcp:
     z_nebula_dbt_csv_000:
       +materialized: table
-  +persist_docs:
-    relation: true 
-    columns: true
+      +persist_docs:
+        relation: true
+        columns: true
