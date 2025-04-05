@@ -21,12 +21,18 @@ import datetime
 import json
 import os
 
+from datetime import datetime, timedelta
+from airflow import DAG
+
 from airflow import models
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
 
 
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+
+
+
 
 # The environment variables from Cloud Composer
 env = Variable.get("run_environment")
@@ -35,8 +41,7 @@ project = os.getenv("GCP_PROJECT")
 # Airflow default arguments
 default_args = {
     'depends_on_past': False,
-    'start_date': datetime.datetime(2016, 1, 1),
-    'end_date': datetime.datetime(2016, 1, 3),
+    'start_date': datetime.datetime(2024, 1, 1),    
     # Make sure to set the catchup to False in this basic example
     # This will prevents multiple dbt runs from the past dates
     'catchup':False,
@@ -107,7 +112,7 @@ with models.DAG(
         get_logs=True,
         log_events_on_failure=True,
         is_delete_operator_pod=True,
-        image=IMAGE,
+        image=IMAGE
     )
 
     dbt_test = KubernetesPodOperator(
@@ -120,7 +125,8 @@ with models.DAG(
         get_logs=True,
         log_events_on_failure=True,
         is_delete_operator_pod=True,
-        image=IMAGE,
+        image=IMAGE
+
     )
 
     dbt_run >> dbt_test

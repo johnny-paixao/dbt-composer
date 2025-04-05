@@ -1,37 +1,35 @@
-# Copyright 2021 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+FROM python:3.8.13
 
-FROM python:3.8.5
+ARG DBT_HOME=/home/dbtuser
 
-# Install required system packages and cleanup to reduce image size
+# Install required system packages
 RUN apt-get update -y && \
   apt-get install --no-install-recommends -y -q \
   git libpq-dev python-dev && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install data build tool
+# Create user and working directory
+RUN groupadd -g 999 dbtuser && useradd -r -u 999 -g dbtuser dbtuser
+WORKDIR ${DBT_HOME}
+RUN chown -R dbtuser:dbtuser ${DBT_HOME}
+USER dbtuser
+
+# Create dbt profiles folder
+RUN mkdir ${DBT_HOME}/.dbt
+
+# Install dbt in virtualenv
 RUN pip install -U pip
-RUN pip install markupsafe==2.0.1
-RUN pip install dbt-bigquery==1.6.4
+ENV VIRTUAL_ENV=${DBT_HOME}/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Set working directory
-ENV DBT_DIR /dbt/
-WORKDIR $DBT_DIR
+# Install dbt version used in your project
+RUN pip install dbt-core==1.0.4 dbt-bigquery==1.0.0
 
-# Copy files to the image
-COPY . $DBT_DIR
+# Copy your real project structure
+COPY --chown=dbtuser:dbtuser ./dbt-project ${DBT_HOME}/dbt-project
+COPY --chown=dbtuser:dbtuser ./dbt-project/.dbt/profiles.yml ${DBT_HOME}/.dbt/
 
-# Run dbt
+# Entrypoint for dbt commands
 ENTRYPOINT ["dbt"]
