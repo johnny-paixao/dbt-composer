@@ -25,15 +25,9 @@ clean-targets:
     - "dbt_modules"
 
 models:
-    dbt_airflow_on_gcp:
-        raw:
-            schema: de_raw
-            materialized: table
-        intermediate:
-            schema: de_intermediate
-            materialized: table
-        datamart:
-            schema: de_datamart
-    +persist_docs:
-        relation: true 
-        columns: true
+  dbt_airflow_on_gcp:
+      schema: z_nebula_dbt_csv_000
+      materialized: table
+  +persist_docs:
+    relation: true 
+    columns: true
