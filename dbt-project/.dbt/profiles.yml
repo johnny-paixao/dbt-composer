@@ -1,13 +1,15 @@
 dbt_airflow_on_gcp:
-  cloud-build:
-    type: bigquery
-    method: oauth
-    project: "{{ var('project_id') }}"
-    dataset: z_nebula_dbt_csv_000
-    threads: 2
-    timeout_seconds: 10
-    location: "{{ var('bigquery_location') }}"
-    priority: batch
-    retries: 0
-    impersonate_service_account: "{{ var('impersonate_service_account') }}"
-    temporary_dataset: dbt_temp
+  outputs:
+    cloud-build:
+      type: bigquery
+      method: oauth
+      project: "{{ var('project_id') }}"
+      dataset: z_nebula_dbt_csv_000
+      threads: 2
+      timeout_seconds: 10
+      location: "{{ var('bigquery_location') }}"
+      priority: batch
+      retries: 0
+      impersonate_service_account: "{{ var('impersonate_service_account') }}"
+      temporary_dataset: dbt_temp
+  target: cloud-build
