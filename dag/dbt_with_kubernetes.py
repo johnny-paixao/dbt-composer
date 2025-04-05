@@ -54,15 +54,6 @@ IMAGE = 'gcr.io/{project}/dbt-builder-basic:latest'.format(
 # more control over how it is used, and reduces the risk of accidental
 # exposure.
 
-secret_volume = Secret(
-    deploy_type='volume',
-    # Path where we mount the secret as volume
-    deploy_target='/var/secrets/google',
-    # Name of Kubernetes Secret
-    secret='dbt-sa-secret',
-    # Key in the form of service account file name
-    key='key.json'
-)
 
 # dbt default variables
 # These variables will be passed into the dbt run
@@ -71,9 +62,7 @@ secret_volume = Secret(
 default_dbt_vars = {
         "project_id": project,
         # Example on using Cloud Composer's variable to be passed to dbt
-        "bigquery_location": Variable.get("bigquery_location"),
-        "key_file_dir": '/var/secrets/google/key.json',
-        "source_data_project": Variable.get("source_data_project")
+        "bigquery_location": Variable.get("bigquery_location")
     }
 
 # dbt default arguments
@@ -123,12 +112,12 @@ with models.DAG(
             name='dbt_cli_{}'.format(cmd),
             image_pull_policy='Always',
             arguments=[cmd] + dbt_cli_args,
-            namespace='default',
+            namespace='dbt-tasks',
+            service_account_name='dbt-ksa',
             get_logs=True,  # Capture logs from the pod
             log_events_on_failure=True,  # Capture and log events in case of pod failure
             is_delete_operator_pod=True, # To clean up the pod after runs
-            image=IMAGE,
-            secrets=[secret_volume]  # Set Kubernetes secret reference to dbt's service account JSON
+            image=IMAGE, # Uses Workload Identity via dbt-ksa to authenticate with GCP
         ).execute(context)
 
     # Running the dbt run command
