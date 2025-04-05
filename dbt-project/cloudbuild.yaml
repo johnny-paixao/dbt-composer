@@ -45,7 +45,7 @@ steps:
   args:
   - -c
   - |
-       dbt docs generate --vars '{"project_id": "unique-nebula-452817-i5","bigquery_location": "EU","impersonate_service_account": "${_DBT_SERVICE_ACCOUNT}","execution_date": "1970-01-01"}' --profiles-dir dbt-project/.dbt --project-dir dbt-project --target cloud-build
+       dbt docs generate --vars '{"project_id": "unique-nebula-452817-i5","bigquery_location": "EU","impersonate_service_account": ${_DBT_SERVICE_ACCOUNT},"execution_date": "1970-01-01"}' --profiles-dir dbt-project/.dbt --project-dir dbt-project --target cloud-build
 
 # _GCS_BUCKET is the GCS Bucket that will store the dbt documentation
 - name: gcr.io/cloud-builders/gsutil
