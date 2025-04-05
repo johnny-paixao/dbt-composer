@@ -1,23 +1,27 @@
-FROM python:3.8-slim
+FROM python:3.8.13-slim
 
-ARG DBT_HOME=/home/dbtuser
+# Defina o diretório de trabalho
+ENV DBT_HOME=/home/dbtuser
+WORKDIR $DBT_HOME
 
-# Install only required system dependencies
-RUN apt-get update -y && \
-  apt-get install --no-install-recommends -y \
-  git libpq-dev gcc && \
-  rm -rf /var/lib/apt/lists/*
+# Instale dependências essenciais
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git \
+        build-essential \
+        libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create user and working directory
-RUN useradd -ms /bin/bash -u 999 dbtuser
-USER dbtuser
-WORKDIR ${DBT_HOME}
+# Instale dbt diretamente no sistema (sem venv)
+RUN pip install --upgrade pip && \
+    pip install dbt-core==1.0.4 dbt-bigquery==1.0.0
 
-# Install dbt directly
-RUN pip install --no-cache-dir dbt-core==1.0.4 dbt-bigquery==1.0.0
+# Crie pasta de configuração do dbt
+RUN mkdir -p $DBT_HOME/.dbt
 
-# Copy project and profile
-COPY --chown=dbtuser:dbtuser . ${DBT_HOME}/dbt-project
-COPY --chown=dbtuser:dbtuser ./.dbt/profiles.yml ${DBT_HOME}/.dbt/profiles.yml
+# Copie o projeto para dentro da imagem
+COPY . $DBT_HOME/dbt-project
+COPY ./.dbt/profiles.yml $DBT_HOME/.dbt/profiles.yml
 
-ENV PATH="${HOME}/.local/bin:$PATH"
+# Defina o diretório padrão de execução
+WORKDIR $DBT_HOME/dbt-project
