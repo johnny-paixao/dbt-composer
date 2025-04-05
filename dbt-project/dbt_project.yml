@@ -26,8 +26,9 @@ clean-targets:
 
 models:
   dbt_airflow_on_gcp:
-      schema: z_nebula_dbt_csv_000
+    z_nebula_dbt_csv_000:  # nome da subpasta dentro de /models/
       materialized: table
+      schema: z_nebula_dbt_csv_000
   +persist_docs:
     relation: true 
     columns: true
