@@ -59,4 +59,5 @@ steps:
   - .
   - gs://${_GCS_BUCKET}/data/dbt-docs-basic/
 
-logging: CLOUD_LOGGING_ONLY
+options:
+  logging: CLOUD_LOGGING_ONLY
