@@ -41,7 +41,7 @@ steps:
 # Generate dbt documentation
 - name: 'gcr.io/$PROJECT_ID/dbt-builder-basic'
   id: Generate documentation
-  entrypoint: bash
+  entrypoint: /home/dbtuser/venv/bin/dbt
   args:
   - -c
   - |
