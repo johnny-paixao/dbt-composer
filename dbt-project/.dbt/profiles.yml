@@ -32,7 +32,7 @@ dbt_airflow_on_gcp:
       project: "{{ var('project_id') }}"
       schema: prod
       threads: 10
-      keyfile: "{{ var('key_file_dir') }}"
+      keyfile: "{{ var('key_file_dir', '') }}"
       timeout_seconds: 300
       location: "{{ var('bigquery_location') }}"
       priority: batch
