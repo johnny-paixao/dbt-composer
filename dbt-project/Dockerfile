@@ -23,7 +23,8 @@ RUN apt-get update -y && \
 
 # Install data build tool
 RUN pip install -U pip
-RUN pip install dbt-bigquery==0.20.1
+RUN pip install markupsafe==2.0.1
+RUN pip install dbt-bigquery==1.6.4
 
 # Set working directory
 ENV DBT_DIR /dbt/
