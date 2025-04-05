@@ -58,3 +58,5 @@ steps:
   - .dockerignore|key|logs|models|tests|.dockerignore|.gitignore|cloudbuild.yaml|Dockerfile|README.md|.git
   - .
   - gs://${_GCS_BUCKET}/data/dbt-docs-basic/
+
+logging: CLOUD_LOGGING_ONLY
