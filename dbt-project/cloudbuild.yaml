@@ -39,7 +39,7 @@ steps:
     ]
 
 # Generate dbt documentation
-- name: 'gcr.io/$PROJECT_ID/airflow-dags-builder'
+- name: 'gcr.io/$PROJECT_ID/dbt-builder-basic'
   id: Generate documentation
   entrypoint: bash
   args:
