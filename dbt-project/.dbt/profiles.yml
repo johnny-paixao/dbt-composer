@@ -49,3 +49,4 @@ dbt_airflow_on_gcp:
       priority: batch
       retries: 0
       impersonate_service_account: "{{ var('impersonate_service_account') }}"
+      temporary_dataset: dbt_temp
