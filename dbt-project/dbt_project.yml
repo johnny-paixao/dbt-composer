@@ -17,7 +17,7 @@ profile:  dbt_airflow_on_gcp
 version: '1.0.0'
 config-version: 2
 
-source-paths: ["models"]
+model-paths: ["models"]
 
 target-path: "target"
 clean-targets:
