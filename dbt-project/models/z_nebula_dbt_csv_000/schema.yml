@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: test_dbt
+  - name: teste_dbt
     description: "Tabela de teste com nomes e idades"
     columns:
       - name: nome
