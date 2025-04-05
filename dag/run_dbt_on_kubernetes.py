@@ -24,7 +24,8 @@ import json
 
 from airflow import DAG
 from airflow.models import Variable
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+
 
 project = os.getenv("GCP_PROJECT")
 env = Variable.get("run_environment")

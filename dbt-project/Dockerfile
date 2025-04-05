@@ -14,7 +14,7 @@ RUN apt-get update && \
 
 # Instale dbt diretamente no sistema (sem venv)
 RUN pip install --upgrade pip && \
-    pip install dbt-core==1.0.4 dbt-bigquery==1.0.0
+    pip install --no-cache-dir dbt-core==1.7.7 dbt-bigquery==1.7.7  
 
 # Crie pasta de configuração do dbt
 RUN mkdir -p $DBT_HOME/.dbt
