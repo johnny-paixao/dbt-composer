@@ -21,8 +21,7 @@ import datetime
 import json
 import os
 
-from datetime import datetime, timedelta
-from airflow import DAG
+
 
 from airflow import models
 from airflow.operators.python_operator import PythonOperator
