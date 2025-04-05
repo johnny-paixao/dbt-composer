@@ -25,7 +25,7 @@ from airflow import models
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
 
-from airflow.kubernetes.secret import Secret
+
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 # The environment variables from Cloud Composer
@@ -92,57 +92,38 @@ for key, value in default_dbt_args.items():
 # Define the DAG
 with models.DAG(
     dag_id='run_dbt_on_kubernetes',
-    schedule_interval= "0 0 * * *",
+    schedule_interval="0 0 * * *",
     default_args=default_args,
+    catchup=False
 ) as dag:
 
-    def run_dbt_on_kubernetes(cmd=None, **context):
-        """This function will execute the KubernetesPodOperator as an Airflow task"""
-        # If running dbt test, we add the store failures parameter.
-        # When added, the dbt test will create tables storing the bad records
-        if cmd == "test":
-            store_test_result = "--store-failures"
-            dbt_cli_args.append(store_test_result)
-
-        # Use the KubernetesPodOperator to run the dbt commands
-        # Check the documentation for the full parameter details
-        # https://cloud.google.com/composer/docs/how-to/using/using-kubernetes-pod-operator#airflow-2
-        KubernetesPodOperator(
-            task_id='dbt_cli_{}'.format(cmd),
-            name='dbt_cli_{}'.format(cmd),
-            image_pull_policy='Always',
-            arguments=[cmd] + dbt_cli_args,
-            namespace='dbt-tasks',
-            service_account_name='dbt-ksa',
-            get_logs=True,  # Capture logs from the pod
-            log_events_on_failure=True,  # Capture and log events in case of pod failure
-            is_delete_operator_pod=True, # To clean up the pod after runs
-            image=IMAGE, # Uses Workload Identity via dbt-ksa to authenticate with GCP
-        ).execute(context)
-
-    # Running the dbt run command
-    # https://docs.getdbt.com/reference/commands/run
-
-    dbt_run = PythonOperator(
+    dbt_run = KubernetesPodOperator(
         task_id='dbt_run',
-        provide_context=True,
-        python_callable=run_dbt_on_kubernetes,
-        op_kwargs={"cmd": "run"}
+        name='dbt-run',
+        namespace='dbt-tasks',
+        service_account_name='dbt-ksa',
+        image_pull_policy='Always',
+        arguments=["run"] + dbt_cli_args,
+        get_logs=True,
+        log_events_on_failure=True,
+        is_delete_operator_pod=True,
+        image=IMAGE,
     )
 
-    # Running the dbt tests command
-    # The tests will run after the "dbt run" command
-    # In dbt, the tests is not a dry test
-    # The tests will check the actual data after loading (data integrity test)
-    # https://docs.getdbt.com/reference/commands/test
-
-    dbt_test = PythonOperator(
+    dbt_test = KubernetesPodOperator(
         task_id='dbt_test',
-        provide_context=True,
-        python_callable=run_dbt_on_kubernetes,
-        op_kwargs={"cmd": "test"}
+        name='dbt-test',
+        namespace='dbt-tasks',
+        service_account_name='dbt-ksa',
+        image_pull_policy='Always',
+        arguments=["test"] + dbt_cli_args + ["--store-failures"],
+        get_logs=True,
+        log_events_on_failure=True,
+        is_delete_operator_pod=True,
+        image=IMAGE,
     )
 
     dbt_run >> dbt_test
+
 
 dag.doc_md = __doc__
