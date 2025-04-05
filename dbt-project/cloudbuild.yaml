@@ -29,6 +29,7 @@ steps:
       '--cache-from', 'gcr.io/$PROJECT_ID/dbt-builder-basic:latest',
       './'
     ]
+  dir: dbt-project
 
 - name: gcr.io/cloud-builders/docker
   id: Push Airflow DAGs Builder
