@@ -40,9 +40,9 @@ dbt_airflow_on_gcp:
     
     cloud-build:
       type: bigquery
-      method: oauth
+      method: service-account
       project: "{{ var('project_id') }}"
-      schema: dev
+      schema: z_nebula_dbt_csv_000
       threads: 2
       timeout_seconds: 10
       location: "{{ var('bigquery_location') }}"
