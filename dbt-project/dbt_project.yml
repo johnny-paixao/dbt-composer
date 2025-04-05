@@ -26,8 +26,9 @@ clean-targets:
 
 models:
   dbt_airflow_on_gcp:
+    +persist_docs:
+      relation: true
+      columns: true
     z_nebula_dbt_csv_000:
       +materialized: table
-      +persist_docs:
-        relation: true
-        columns: true
+

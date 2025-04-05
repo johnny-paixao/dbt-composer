@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: test_dbt
+    description: "Tabela de teste com nomes e idades"
+    columns:
+      - name: nome
+        description: "Nome da pessoa"
+      - name: idade
+        description: "Idade da pessoa"
