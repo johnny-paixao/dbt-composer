@@ -40,7 +40,8 @@ default_args = {
 # Convert dbt arguments
 dbt_vars = {
     "project_id": project,
-    "bigquery_location": Variable.get("bigquery_location")
+    "bigquery_location": Variable.get("bigquery_location"),
+    "impersonate_service_account": "dbt-runner-sa@unique-nebula-452817-i5.iam.gserviceaccount.com"
 }
 
 dbt_args = [
