@@ -33,8 +33,7 @@ env = Variable.get("run_environment")
 default_args = {
     'depends_on_past': False,
     'start_date': datetime(2024, 1, 1),
-    'retries': 0,
-    'catchup': False
+    'retries': 0
 }
 
 # Convert dbt arguments
@@ -54,6 +53,7 @@ with DAG(
     dag_id='run_dbt_on_kubernetes',
     default_args=default_args,
     schedule_interval="0 0 * * *",
+    catchup=False,
     tags=["dbt", "kubernetes"]
 ) as dag:
 
